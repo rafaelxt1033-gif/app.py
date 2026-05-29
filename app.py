@@ -92,4 +92,58 @@ if verificar_senha():
         
         st.markdown("---")
         st.markdown("**2. Calças / Saias**")
-        est_fem_2 = st.number_input("Estoque Inicial (Calça Fem):", 0, 500
+        est_fem_2 = st.number_input("Estoque Inicial (Calça Fem):", 0, 500, 100, key="ei_fem2")
+        vend_fem_2 = st.slider("Vendidas (Calça Fem):", 0, est_fem_2, 35, key="vi_fem2")
+        pr_fem_2 = st.number_input("Preço R$ (Calça Fem):", 10, 400, 119, key="pi_fem2")
+        dados_produtos.append(['Feminino - Calça/Saia', est_fem_2, vend_fem_2, pr_fem_2])
+        
+        st.markdown("---")
+        st.markdown("**3. Vestidos / Macacões**")
+        est_fem_3 = st.number_input("Estoque Inicial (Vestido Fem):", 0, 500, 80, key="ei_fem3")
+        vend_fem_3 = st.slider("Vendidas (Vestido Fem):", 0, est_fem_3, 30, key="vi_fem3")
+        pr_fem_3 = st.number_input("Preço R$ (Vestido Fem):", 10, 500, 159, key="pi_fem3")
+        dados_produtos.append(['Feminino - Vestido/Macacão', est_fem_3, vend_fem_3, pr_fem_3])
+
+    # 3. PROCESSAMENTO MATEMÁTICO AVANÇADO
+    df = pd.DataFrame(dados_produtos, columns=['Produto', 'Estoque Inicial', 'Vendidas', 'Preço Unitário (R$)'])
+
+    df['Faturamento (R$)'] = df['Vendidas'] * df['Preço Unitário (R$)']
+    df['Estoque Atual'] = df['Estoque Inicial'] - df['Vendidas']
+    df['Status'] = df['Estoque Atual'].apply(lambda x: '🚨 Repor' if x < 20 else '✅ OK')
+
+    st.divider()
+    
+    # 4. EXIBIÇÃO DOS RESULTADOS NA TELA
+    st.subheader("💰 Resumo Financeiro Geral")
+    c1, c2, c3 = st.columns(3)
+    c1.metric(label="💰 Faturamento Total", value=f"R$ {df['Faturamento (R$)'].sum()},00")
+    c2.metric(label="📦 Peças Vendidas", value=f"{df['Vendidas'].sum()} un")
+    c3.metric(label="🏬 No Estoque", value=f"{df['Estoque Atual'].sum()} un")
+    
+    st.divider()
+    st.subheader("📋 Relatório por Tipo de Peça")
+    st.dataframe(df, use_container_width=True, hide_index=True)
+    
+    csv = df.to_csv(index=False).encode('utf-8')
+    st.download_button(label="📥 Baixar Planilha Completa", data=csv, file_name='estoque_detalhado.csv', mime='text/csv', use_container_width=True)
+
+    st.divider()
+    st.subheader("📊 Gráfico de Movimentação por Peça")
+    
+    fig, ax = plt.subplots(figsize=(7, 5))
+    y = range(len(df['Produto']))
+    altura_barra = 0.35
+    
+    barras_v = ax.barh([i - altura_barra/2 for i in y], df['Vendidas'], altura_barra, label='Vendidas', color='#0288D1')
+    barras_e = ax.barh([i + altura_barra/2 for i in y], df['Estoque Atual'], altura_barra, label='Estoque', color='#B0BEC5')
+    
+    ax.set_yticks(y)
+    ax.set_yticklabels(df['Produto'], fontsize=9)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.legend()
+    
+    st.tight_layout()
+    st.pyplot(fig)
+
+    st.caption("🔒 Aplicativo Oficial de Produção.")
