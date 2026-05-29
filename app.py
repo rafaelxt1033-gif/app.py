@@ -31,39 +31,48 @@ if verificar_senha():
             st.session_state["autenticado"] = False
             st.rerun()
             
-    st.markdown("Controle rápido de estoque e vendas direto do smartphone.")
+    st.markdown("Controle rápido de estoque, vendas e preços por setor.")
     st.divider()
 
-    st.subheader("🎛️ Atualizar Estoque e Preços")
+    st.subheader("🎛️ Painel de Produtos e Preços")
+    
+    # --- SETOR INFANTIL ---
     with st.expander("👶 Roupas Infantis", expanded=True):
-        est_infantil = st.number_input("Estoque Inicial (Infantil):", 0, 500, 150)
-        vendas_infantil = st.slider("Peças Vendidas (Infantil):", 0, est_infantil, 40)
-        preco_infantil = st.number_input("Preço Unitário (Infantil) R$:", 10, 200, 49)
+        est_infantil = st.number_input("Estoque Inicial (Infantil):", 0, 500, 150, key="est_inf")
+        vendas_infantil = st.slider("Peças Vendidas (Infantil):", 0, est_infantil, 40, key="vend_inf")
+        # Preço exclusivo para o setor infantil
+        preco_infantil = st.number_input("Preço de Venda (Infantil) R$:", 10, 200, 49, key="pr_inf")
 
+    # --- SETOR MASCULINO ---
     with st.expander("👨 Masculino Adulto"):
-        est_masc = st.number_input("Estoque Inicial (Masc Adulto):", 0, 500, 200)
-        vendas_masc = st.slider("Peças Vendidas (Masc Adulto):", 0, est_masc, 95)
-        preco_masc = st.number_input("Preço Unitário (Masc Adulto) R$:", 10, 300, 79)
+        est_masc = st.number_input("Estoque Inicial (Masc Adulto):", 0, 500, 200, key="est_masc")
+        vendas_masc = st.slider("Peças Vendidas (Masc Adulto):", 0, est_masc, 95, key="vend_masc")
+        # Preço exclusivo para o setor masculino
+        preco_masc = st.number_input("Preço de Venda (Masc Adulto) R$:", 10, 300, 79, key="pr_masc")
 
+    # --- SETOR FEMININO ---
     with st.expander("👩 Feminino Adulto"):
-        est_fem = st.number_input("Estoque Inicial (Fem Adulto):", 0, 500, 250)
-        vendas_fem = st.slider("Peças Vendidas (Fem Adulto):", 0, est_fem, 130)
-        preco_fem = st.number_input("Preço Unitário (Fem Adulto) R$:", 10, 400, 99)
+        est_fem = st.number_input("Estoque Inicial (Fem Adulto):", 0, 500, 250, key="est_fem")
+        vendas_fem = st.slider("Peças Vendidas (Fem Adulto):", 0, est_fem, 130, key="vend_fem")
+        # Preço exclusivo para o setor feminino
+        preco_fem = st.number_input("Preço de Venda (Fem Adulto) R$:", 10, 400, 99, key="pr_fem")
 
+    # 3. PROCESSAMENTO MATEMÁTICO DOS DADOS
     df = pd.DataFrame({
         'Categoria': ['Infantil', 'Masculino Adulto', 'Feminino Adulto'],
         'Estoque Inicial': [est_infantil, est_masc, est_fem],
         'Vendidas': [vendas_infantil, vendas_masc, vendas_fem],
-        'Preço (R$)': [preco_infantil, preco_masc, preco_fem]
+        'Preço Unitário (R$)': [preco_infantil, preco_masc, preco_fem] # Aplicando os preços separados aqui!
     })
 
-    df['Faturamento (R$)'] = df['Vendidas'] * df['Preço (R$)']
+    # O sistema calcula o faturamento multiplicando as vendas pelo preço específico de cada um
+    df['Faturamento (R$)'] = df['Vendidas'] * df['Preço Unitário (R$)']
     df['Estoque Atual'] = df['Estoque Inicial'] - df['Vendidas']
     df['Status'] = df['Estoque Atual'].apply(lambda x: '🚨 Repor' if x < 30 else '✅ OK')
 
     st.divider()
     
-    # Exibição Direta (Sem abas para evitar o bug do navegador)
+    # 4. EXIBIÇÃO DOS RESULTADOS NA TELA
     st.subheader("💰 Resumo Financeiro")
     c1, c2, c3 = st.columns(3)
     c1.metric(label="💰 Faturamento Total", value=f"R$ {df['Faturamento (R$)'].sum()},00")
@@ -94,4 +103,4 @@ if verificar_senha():
     st.pyplot(fig)
 
     st.caption("🔒 Aplicativo Oficial de Produção.")
-    
+   
