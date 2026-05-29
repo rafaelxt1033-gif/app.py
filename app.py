@@ -58,7 +58,6 @@ if verificar_senha():
     # --- CABEÇALHO DO SITE COM A LOGO MARCA ---
     col_logo, col_sair = st.columns([4, 1])
     with col_logo:
-        # Se a imagem existir na pasta, ele mostra a logo dourada maravilhosa
         if os.path.exists("logo.jpeg"):
             st.image("logo.jpeg", width=280)
         else:
@@ -172,7 +171,6 @@ if verificar_senha():
     y = range(len(df['Produto']))
     altura_barra = 0.35
     
-    # Cores do gráfico ajustadas para tons combinando com a marca (Azul Marinho sofisticado e Cinza)
     barras_v = ax.barh([i - altura_barra/2 for i in y], df['Vendidas'], altura_barra, label='Vendidas', color='#1A2E40')
     barras_e = ax.barh([i + altura_barra/2 for i in y], df['Estoque Atual'], altura_barra, label='Estoque', color='#D4AF37')
     
@@ -182,8 +180,7 @@ if verificar_senha():
     ax.spines['right'].set_visible(False)
     ax.legend()
     
-    st.tight_layout()
+    plt.tight_layout() # Comando corrigido para o Matplotlib!
     st.pyplot(fig)
 
-    st.caption("🔒 Aplicativo Oficial de Produção - Gráciare.")
-    
+    st.caption("🔒 Aplicativo Oficial de Production - Gráciare.")
