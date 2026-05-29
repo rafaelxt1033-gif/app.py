@@ -1,18 +1,50 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
-# Layout Mobile First limpo
-st.set_page_config(page_title="App Lojista", layout="centered", initial_sidebar_state="collapsed")
+# 1. Configuração da página e estilização de Cores (Dourado e Elegante)
+st.set_page_config(
+    page_title="Gráciare - Gestão", 
+    layout="centered", 
+    initial_sidebar_state="collapsed"
+)
+
+# Injeta CSS personalizado para mudar a cor dos botões e fontes para combinar com o Dourado/Sofisticado
+st.markdown("""
+    <style>
+        /* Altera a cor de fundo geral do site para um branco elegante */
+        .stApp {
+            background-color: #FFFFFF;
+        }
+        /* Estiliza os títulos secundários com um tom de dourado escuro/bronze para leitura */
+        h1, h2, h3 {
+            color: #B58D3D !important;
+            font-family: 'Georgia', serif;
+        }
+        /* Estiliza as métricas financeiras */
+        [data-testid="stMetricValue"] {
+            color: #B58D3D !important;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 
 def verificar_senha():
     if "autenticado" not in st.session_state:
         st.session_state["autenticado"] = False
     if not st.session_state["autenticado"]:
+        
+        # Exibe a logo no topo da tela de login também!
+        if os.path.exists("logo.jpeg"):
+            st.image("logo.jpeg", use_container_width=True)
+        else:
+            st.title("✨ GRÁCIARE")
+            
         with st.form(key="login_form"):
-            st.subheader("🔒 Acesso Restrito")
+            st.subheader("🔒 Acesso Restrito ao Sistema")
             senha = st.text_input("Senha de Gerente:", type="password")
-            botao_entrar = st.form_submit_button("Entrar")
+            botao_entrar = st.form_submit_button("Entrar no Painel")
             if botao_entrar:
                 if senha == "moda123":
                     st.session_state["autenticado"] = True
@@ -23,15 +55,21 @@ def verificar_senha():
     return True
 
 if verificar_senha():
-    col_titulo, col_sair = st.columns([4, 1])
-    with col_titulo:
-        st.title("📱 Gestão da Loja")
+    # --- CABEÇALHO DO SITE COM A LOGO MARCA ---
+    col_logo, col_sair = st.columns([4, 1])
+    with col_logo:
+        # Se a imagem existir na pasta, ele mostra a logo dourada maravilhosa
+        if os.path.exists("logo.jpeg"):
+            st.image("logo.jpeg", width=280)
+        else:
+            st.title("✨ GRÁCIARE")
     with col_sair:
+        st.write("") # Espaçamento visual
         if st.button("Sair"):
             st.session_state["autenticado"] = False
             st.rerun()
             
-    st.markdown("Controle de estoque e vendas detalhado por tipo de peça.")
+    st.markdown("*Painel Executivo de Controle de Estoque e Vendas.*")
     st.divider()
 
     st.subheader("🎛️ Painel de Produtos por Setor")
@@ -134,8 +172,9 @@ if verificar_senha():
     y = range(len(df['Produto']))
     altura_barra = 0.35
     
-    barras_v = ax.barh([i - altura_barra/2 for i in y], df['Vendidas'], altura_barra, label='Vendidas', color='#0288D1')
-    barras_e = ax.barh([i + altura_barra/2 for i in y], df['Estoque Atual'], altura_barra, label='Estoque', color='#B0BEC5')
+    # Cores do gráfico ajustadas para tons combinando com a marca (Azul Marinho sofisticado e Cinza)
+    barras_v = ax.barh([i - altura_barra/2 for i in y], df['Vendidas'], altura_barra, label='Vendidas', color='#1A2E40')
+    barras_e = ax.barh([i + altura_barra/2 for i in y], df['Estoque Atual'], altura_barra, label='Estoque', color='#D4AF37')
     
     ax.set_yticks(y)
     ax.set_yticklabels(df['Produto'], fontsize=9)
@@ -146,4 +185,5 @@ if verificar_senha():
     st.tight_layout()
     st.pyplot(fig)
 
-    st.caption("🔒 Aplicativo Oficial de Produção.")
+    st.caption("🔒 Aplicativo Oficial de Produção - Gráciare.")
+    
