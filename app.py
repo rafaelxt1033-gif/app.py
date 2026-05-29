@@ -3,184 +3,186 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-# 1. Configuração da página e estilização de Cores (Dourado e Elegante)
+# 1. Configuração de Alta Performance e Design
 st.set_page_config(
-    page_title="Gráciare - Gestão", 
-    layout="centered", 
-    initial_sidebar_state="collapsed"
+    page_title="Gráciare | Gestão Executiva",
+    page_icon="✨",
+    layout="centered"
 )
 
-# Injeta CSS personalizado para mudar a cor dos botões e fontes para combinar com o Dourado/Sofisticado
+# 2. Injeção de CSS para Interatividade e Elegância (O "Coração" do novo Design)
 st.markdown("""
     <style>
-        /* Altera a cor de fundo geral do site para um branco elegante */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap');
+
+        /* Fundo e Fonte Geral */
         .stApp {
-            background-color: #FFFFFF;
+            background-color: #FDFCF0;
+            font-family: 'DM Sans', sans-serif;
         }
-        /* Estiliza os títulos secundários com um tom de dourado escuro/bronze para leitura */
+
+        /* Estilização dos Títulos */
         h1, h2, h3 {
-            color: #B58D3D !important;
-            font-family: 'Georgia', serif;
+            font-family: 'Playfair Display', serif !important;
+            color: #001F3F !important; /* Azul Marinho Gráciare */
         }
-        /* Estiliza as métricas financeiras */
+
+        /* Botões Interativos */
+        div.stButton > button {
+            background-color: #D4AF37 !important; /* Dourado */
+            color: white !important;
+            border-radius: 25px !important;
+            border: none !important;
+            padding: 10px 25px !important;
+            transition: all 0.3s ease-in-out !important;
+            font-weight: 500 !important;
+            width: 100%;
+        }
+        div.stButton > button:hover {
+            background-color: #001F3F !important;
+            transform: scale(1.05);
+            box-shadow: 0px 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Cartões de Produtos (Expander Customizado) */
+        .stExpander {
+            background-color: white !important;
+            border: 1px solid #E5E0D5 !important;
+            border-radius: 15px !important;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.03) !important;
+            margin-bottom: 15px !important;
+        }
+
+        /* Métricas Elegantes */
         [data-testid="stMetricValue"] {
-            color: #B58D3D !important;
+            color: #D4AF37 !important;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Inputs e Sliders */
+        .stSlider > div > div > div > div {
+            background-color: #D4AF37 !important;
         }
     </style>
 """, unsafe_allow_html=True)
-
 
 def verificar_senha():
     if "autenticado" not in st.session_state:
         st.session_state["autenticado"] = False
     if not st.session_state["autenticado"]:
         
-        # Exibe a logo no topo da tela de login também!
-        if os.path.exists("logo.jpeg"):
-            st.image("logo.jpeg", use_container_width=True)
-        else:
-            st.title("✨ GRÁCIARE")
+        # Centralização da Logo no Login
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if os.path.exists("logo.jpeg"):
+                st.image("logo.jpeg", use_container_width=True)
+            else:
+                st.title("✨ GRÁCIARE")
             
         with st.form(key="login_form"):
-            st.subheader("🔒 Acesso Restrito ao Sistema")
-            senha = st.text_input("Senha de Gerente:", type="password")
-            botao_entrar = st.form_submit_button("Entrar no Painel")
+            st.markdown("<h3 style='text-align: center;'>Acesso ao Painel</h3>", unsafe_allow_html=True)
+            senha = st.text_input("Chave de Segurança:", type="password")
+            botao_entrar = st.form_submit_button("DESBLOQUEAR SISTEMA")
             if botao_entrar:
                 if senha == "moda123":
                     st.session_state["autenticado"] = True
                     st.rerun()
                 else:
-                    st.error("❌ Senha incorreta.")
+                    st.error("❌ Acesso negado.")
         return False
     return True
 
 if verificar_senha():
-    # --- CABEÇALHO DO SITE COM A LOGO MARCA ---
-    col_logo, col_sair = st.columns([4, 1])
+    # Cabeçalho Superior
+    col_logo, col_sair = st.columns([3, 1])
     with col_logo:
         if os.path.exists("logo.jpeg"):
-            st.image("logo.jpeg", width=280)
+            st.image("logo.jpeg", width=220)
         else:
-            st.title("✨ GRÁCIARE")
+            st.header("GRÁCIARE")
     with col_sair:
-        st.write("") # Espaçamento visual
-        if st.button("Sair"):
+        st.write("")
+        if st.button("Encerrar Sessão"):
             st.session_state["autenticado"] = False
             st.rerun()
             
-    st.markdown("*Painel Executivo de Controle de Estoque e Vendas.*")
+    st.markdown("<p style='color: #B58D3D; font-style: italic;'>Gestão de elegância e controle de resultados.</p>", unsafe_allow_html=True)
     st.divider()
 
-    st.subheader("🎛️ Painel de Produtos por Setor")
+    # Corpo do Aplicativo
+    st.subheader("⚜️ Inventário e Coleções")
     
     dados_produtos = []
 
-    # --- SETOR INFANTIL ---
-    with st.expander("👶 Setor Infantil (Meninos e Meninas)", expanded=True):
-        st.markdown("**1. Camisetas / Blusinhas**")
-        est_inf_1 = st.number_input("Estoque Inicial (Camiseta Inf):", 0, 500, 100, key="ei_inf1")
-        vend_inf_1 = st.slider("Vendidas (Camiseta Inf):", 0, est_inf_1, 30, key="vi_inf1")
-        pr_inf_1 = st.number_input("Preço R$ (Camiseta Inf):", 10, 200, 39, key="pi_inf1")
-        dados_produtos.append(['Infantil - Camiseta/Blusinha', est_inf_1, vend_inf_1, pr_inf_1])
-        
-        st.markdown("---")
-        st.markdown("**2. Calças / Bermudas**")
-        est_inf_2 = st.number_input("Estoque Inicial (Calça Inf):", 0, 500, 80, key="ei_inf2")
-        vend_inf_2 = st.slider("Vendidas (Calça Inf):", 0, est_inf_2, 20, key="vi_inf2")
-        pr_inf_2 = st.number_input("Preço R$ (Calça Inf):", 10, 200, 59, key="pi_inf2")
-        dados_produtos.append(['Infantil - Calça/Bermuda', est_inf_2, vend_inf_2, pr_inf_2])
-        
-        st.markdown("---")
-        st.markdown("**3. Conjuntos / Vestidos**")
-        est_inf_3 = st.number_input("Estoque Inicial (Conjunto Inf):", 0, 500, 60, key="ei_inf3")
-        vend_inf_3 = st.slider("Vendidas (Conjunto Inf):", 0, est_inf_3, 15, key="vi_inf3")
-        pr_inf_3 = st.number_input("Preço R$ (Conjunto Inf):", 10, 300, 89, key="pi_inf3")
-        dados_produtos.append(['Infantil - Conjunto/Vestido', est_inf_3, vend_inf_3, pr_inf_3])
+    # Configuração dos Setores em Colunas ou Cards
+    setores = {
+        "👶 Infantil": [
+            ("Camiseta/Blusinha", "ei_inf1", "vi_inf1", "pi_inf1", 39),
+            ("Calça/Bermuda", "ei_inf2", "vi_inf2", "pi_inf2", 59),
+            ("Conjunto/Vestido", "ei_inf3", "vi_inf3", "pi_inf3", 89)
+        ],
+        "👨 Masculino": [
+            ("Camiseta/Polo", "ei_mas1", "vi_mas1", "pi_mas1", 69),
+            ("Calça Jeans", "ei_mas2", "vi_mas2", "pi_mas2", 139),
+            ("Bermuda/Short", "ei_mas3", "vi_mas3", "pi_mas3", 89)
+        ],
+        "👩 Feminino": [
+            ("Blusa/Top", "ei_fem1", "vi_fem1", "pi_fem1", 49),
+            ("Calça/Saia", "ei_fem2", "vi_fem2", "pi_fem2", 119),
+            ("Vestido/Macacão", "ei_fem3", "vi_fem3", "pi_fem3", 159)
+        ]
+    }
 
-    # --- SETOR MASCULINO ADULTO ---
-    with st.expander("👨 Setor Masculino Adulto"):
-        st.markdown("**1. Camisetas / Polos**")
-        est_masc_1 = st.number_input("Estoque Inicial (Camiseta Masc):", 0, 500, 120, key="ei_masc1")
-        vend_masc_1 = st.slider("Vendidas (Camiseta Masc):", 0, est_masc_1, 45, key="vi_masc1")
-        pr_masc_1 = st.number_input("Preço R$ (Camiseta Masc):", 10, 200, 69, key="pi_masc1")
-        dados_produtos.append(['Masculino - Camiseta/Polo', est_masc_1, vend_masc_1, pr_masc_1])
-        
-        st.markdown("---")
-        st.markdown("**2. Calças Jeans**")
-        est_masc_2 = st.number_input("Estoque Inicial (Calça Masc):", 0, 500, 90, key="ei_masc2")
-        vend_masc_2 = st.slider("Vendidas (Calça Masc):", 0, est_masc_2, 25, key="vi_masc2")
-        pr_masc_2 = st.number_input("Preço R$ (Calça Masc):", 10, 400, 139, key="pi_masc2")
-        dados_produtos.append(['Masculino - Calça Jeans', est_masc_2, vend_masc_2, pr_masc_2])
-        
-        st.markdown("---")
-        st.markdown("**3. Bermudas / Shorts**")
-        est_masc_3 = st.number_input("Estoque Inicial (Bermuda Masc):", 0, 500, 100, key="ei_masc3")
-        vend_masc_3 = st.slider("Vendidas (Bermuda Masc):", 0, est_masc_3, 40, key="vi_masc3")
-        pr_masc_3 = st.number_input("Preço R$ (Bermuda Masc):", 10, 300, 89, key="pi_masc3")
-        dados_produtos.append(['Masculino - Bermuda/Short', est_masc_3, vend_masc_3, pr_masc_3])
+    for setor, itens in setores.items():
+        with st.expander(setor, expanded=(setor == "👩 Feminino")):
+            for nome, k_est, k_vend, k_prec, v_prec in itens:
+                col1, col2 = st.columns([2, 1])
+                with col1:
+                    st.markdown(f"**{nome}**")
+                    est = st.number_input(f"Estoque:", 0, 500, 100, key=k_est)
+                with col2:
+                    st.write("") # alinhamento
+                    prec = st.number_input(f"Preço R$:", 10, 1000, v_prec, key=k_prec)
+                
+                vend = st.slider(f"Unidades Vendidas:", 0, est, 10, key=k_vend)
+                dados_produtos.append([f"{setor} - {nome}", est, vend, prec])
+                st.markdown("---")
 
-    # --- SETOR FEMININO ADULTO ---
-    with st.expander("👩 Setor Feminino Adulto"):
-        st.markdown("**1. Blusas / Tops**")
-        est_fem_1 = st.number_input("Estoque Inicial (Blusa Fem):", 0, 500, 150, key="ei_fem1")
-        vend_fem_1 = st.slider("Vendidas (Blusa Fem):", 0, est_fem_1, 60, key="vi_fem1")
-        pr_fem_1 = st.number_input("Preço R$ (Blusa Fem):", 10, 200, 49, key="pi_fem1")
-        dados_produtos.append(['Feminino - Blusa/Top', est_fem_1, vend_fem_1, pr_fem_1])
-        
-        st.markdown("---")
-        st.markdown("**2. Calças / Saias**")
-        est_fem_2 = st.number_input("Estoque Inicial (Calça Fem):", 0, 500, 100, key="ei_fem2")
-        vend_fem_2 = st.slider("Vendidas (Calça Fem):", 0, est_fem_2, 35, key="vi_fem2")
-        pr_fem_2 = st.number_input("Preço R$ (Calça Fem):", 10, 400, 119, key="pi_fem2")
-        dados_produtos.append(['Feminino - Calça/Saia', est_fem_2, vend_fem_2, pr_fem_2])
-        
-        st.markdown("---")
-        st.markdown("**3. Vestidos / Macacões**")
-        est_fem_3 = st.number_input("Estoque Inicial (Vestido Fem):", 0, 500, 80, key="ei_fem3")
-        vend_fem_3 = st.slider("Vendidas (Vestido Fem):", 0, est_fem_3, 30, key="vi_fem3")
-        pr_fem_3 = st.number_input("Preço R$ (Vestido Fem):", 10, 500, 159, key="pi_fem3")
-        dados_produtos.append(['Feminino - Vestido/Macacão', est_fem_3, vend_fem_3, pr_fem_3])
+    # Cálculos Avançados
+    df = pd.DataFrame(dados_produtos, columns=['Produto', 'Inicial', 'Vendidas', 'Preço'])
+    df['Faturamento'] = df['Vendidas'] * df['Preço']
+    df['Atual'] = df['Inicial'] - df['Vendidas']
 
-    # 3. PROCESSAMENTO MATEMÁTICO AVANÇADO
-    df = pd.DataFrame(dados_produtos, columns=['Produto', 'Estoque Inicial', 'Vendidas', 'Preço Unitário (R$)'])
+    # Dashboard de Métricas
+    st.subheader("💰 Performance Financeira")
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Faturamento", f"R$ {df['Faturamento'].sum():,.2f}")
+    m2.metric("Peças Saídas", f"{df['Vendidas'].sum()} un")
+    m3.metric("Giro Estoque", f"{(df['Vendidas'].sum()/df['Inicial'].sum()*100):.1f}%")
 
-    df['Faturamento (R$)'] = df['Vendidas'] * df['Preço Unitário (R$)']
-    df['Estoque Atual'] = df['Estoque Inicial'] - df['Vendidas']
-    df['Status'] = df['Estoque Atual'].apply(lambda x: '🚨 Repor' if x < 20 else '✅ OK')
-
-    st.divider()
+    # Gráfico Customizado Estilo "Gráciare Gold"
+    st.subheader("📊 Análise de Fluxo")
+    fig, ax = plt.subplots(figsize=(8, 5))
+    fig.patch.set_facecolor('#FDFCF0') # Fundo igual ao site
     
-    # 4. EXIBIÇÃO DOS RESULTADOS NA TELA
-    st.subheader("💰 Resumo Financeiro Geral")
-    c1, c2, c3 = st.columns(3)
-    c1.metric(label="💰 Faturamento Total", value=f"R$ {df['Faturamento (R$)'].sum()},00")
-    c2.metric(label="📦 Peças Vendidas", value=f"{df['Vendidas'].sum()} un")
-    c3.metric(label="🏬 No Estoque", value=f"{df['Estoque Atual'].sum()} un")
+    cores = ['#001F3F', '#D4AF37'] # Navy e Gold
+    df.plot(kind='barh', x='Produto', y=['Vendidas', 'Atual'], ax=ax, color=cores, width=0.7)
     
-    st.divider()
-    st.subheader("📋 Relatório por Tipo de Peça")
-    st.dataframe(df, use_container_width=True, hide_index=True)
-    
-    csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button(label="📥 Baixar Planilha Completa", data=csv, file_name='estoque_detalhado.csv', mime='text/csv', use_container_width=True)
-
-    st.divider()
-    st.subheader("📊 Gráfico de Movimentação por Peça")
-    
-    fig, ax = plt.subplots(figsize=(7, 5))
-    y = range(len(df['Produto']))
-    altura_barra = 0.35
-    
-    barras_v = ax.barh([i - altura_barra/2 for i in y], df['Vendidas'], altura_barra, label='Vendidas', color='#1A2E40')
-    barras_e = ax.barh([i + altura_barra/2 for i in y], df['Estoque Atual'], altura_barra, label='Estoque', color='#D4AF37')
-    
-    ax.set_yticks(y)
-    ax.set_yticklabels(df['Produto'], fontsize=9)
+    ax.set_facecolor('#FDFCF0')
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
-    ax.legend()
-    
-    plt.tight_layout() # Comando corrigido para o Matplotlib!
+    ax.legend(['Vendidas', 'Em Loja'], frameon=False)
+    plt.tight_layout()
     st.pyplot(fig)
 
-    st.caption("🔒 Aplicativo Oficial de Production - Gráciare.")
+    st.divider()
+    # Botão de Exportação Elegante
+    csv = df.to_csv(index=False).encode('utf-8')
+    st.download_button(
+        label="📥 EXPORTAR RELATÓRIO EXECUTIVO (CSV)",
+        data=csv,
+        file_name='relatorio_graciare.csv',
+        mime='text/csv'
+    )
+
+    st.caption("© 2024 Gráciare - Gestão de Luxo Protegida.")
